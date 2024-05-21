@@ -7,6 +7,15 @@ use App\Abstracts\Http\FormRequest;
 class Signup extends FormRequest
 {
     /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -15,7 +24,7 @@ class Signup extends FormRequest
     {
         return [
             'company_name' => 'required',
-            'company_email' => 'required|email',
+            // 'company_email' => 'required|email',
             'user_email' => 'required|email',
             'password' => 'required|string|confirmed'
         ];

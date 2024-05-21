@@ -30,7 +30,7 @@
 
                 <x-form.group.text name="company_name" label="{{ trans('install.settings.company_name') }}" value="{{ old('company_name') }}" form-group-class="sm:col-span-6" />
 
-                <x-form.group.text name="company_email" label="{{ trans('install.settings.company_email') }}" value="{{ old('company_email') }}" form-group-class="sm:col-span-6" />
+                {{-- <x-form.group.text name="company_email" label="{{ trans('install.settings.company_email') }}" value="{{ old('company_email') }}" form-group-class="sm:col-span-6" /> --}}
 
                 <x-form.group.text name="user_email" label="{{ trans('install.settings.admin_email') }}" value="{{ old('user_email') }}" form-group-class="sm:col-span-6" />
 
@@ -62,6 +62,15 @@
                         {{ trans('auth.register') }}
                     </span>
                 </x-button>
+
+                <div class="sm:col-span-6 flex flex-row justify-between items-center">
+                    <div></div>
+                    @stack('login-from-signup-start')
+                    <x-link href="{{ route('login') }}" class="text-black-400 hover:text-black-700 text-sm" override="class">
+                        {{ trans('Already registerted? Login here.') }}
+                    </x-link>
+                    @stack('login-from-signup-end')
+                </div>
             </div>
         </x-form>
     </x-slot>

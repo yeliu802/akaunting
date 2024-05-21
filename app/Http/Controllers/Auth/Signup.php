@@ -12,6 +12,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\Auth\CreateUser;
 use App\Jobs\Common\CreateCompany;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Auth\User;
 
 class Signup extends Controller
 {
@@ -41,26 +43,35 @@ class Signup extends Controller
 
     public function store(Request $request)
     {
-        dd(['aa' => 'ddd']);
-        return '';
-    }
-
-    public function store1(Request $request)
-    {
         // $invitation = UserInvitation::token($request->get('token'))->first();
 
         // if (!$invitation) {
         //     abort(403);
         // }
-        dd($request);
+
+        if (User::where('email', $request->get('user_email'))->exists()) {
+            return response()->json([
+                'status' => null,
+                'success' => false,
+                'error' => true,
+                // 'message' => trans('auth.error.no_company'),
+                'message' => 'Email already registered!',
+                'data' => null,
+                'redirect' => null,
+            ]);
+        }
 
         DB::transaction(function () use ($request) {
             $locale = session('locale') ?? config('app.locale');
 
+            // $request->get('company_email')
+            $company_email = $request->get('user_email');
+
             // Create company
-            $this->createCompany($request->get('company_name'), $request->get('company_email'), $locale);
+            $this->createCompany($request->get('company_name'), $company_email, $locale);
 
             $company_id = company()?->id;
+
             // Create user
             $this->createUser($request->get('user_email'), $request->get('password'), $company_id, $locale);
         });
@@ -68,13 +79,14 @@ class Signup extends Controller
         $user = user();
 
         // $this->dispatch(new DeleteInvitation($invitation));
-        $this->guard()->login($user);
+        // Auth::guard()->login($user);
         $message = trans('messages.success.connected', ['type' => trans_choice('general.users', 1)]);
 
         flash($message)->success();
 
         return response()->json([
-            'redirect' => url($this->redirectPath()),
+            'redirect' => url('/auth/login'),
+            // 'redirect' => url($this->redirectPath()),
         ]);
         // event(new Registered($user));
 

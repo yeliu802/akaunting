@@ -73,6 +73,15 @@
                         {{ trans('auth.login') }}
                     </x-button.loading>
                 </x-button>
+
+                <div class="sm:col-span-6 flex flex-row justify-between items-center">
+                    <div></div>
+                    @stack('signup-start')
+                    <x-link href="{{ route('signup') }}" class="text-black-400 hover:text-black-700 text-sm" override="class">
+                        {{ trans('Signup Now!') }}
+                    </x-link>
+                    @stack('signup-end')
+                </div>
             </div>
         </x-form>
     </x-slot>

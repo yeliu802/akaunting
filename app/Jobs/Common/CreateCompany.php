@@ -22,7 +22,7 @@ class CreateCompany extends Job implements HasOwner, HasSource, ShouldCreate
 
     public function handle(): Company
     {
-        $this->authorize();
+        // $this->authorize();
 
         $current_company_id = company_id();
 
@@ -40,11 +40,11 @@ class CreateCompany extends Job implements HasOwner, HasSource, ShouldCreate
             $this->updateSettings();
         });
 
-        if (! empty($current_company_id)) {
+        if (!empty($current_company_id)) {
             company($current_company_id)->makeCurrent();
         }
 
-        $this->clearPlansCache();
+        // $this->clearPlansCache();
 
         event(new CompanyCreated($this->model, $this->request));
 
@@ -57,7 +57,7 @@ class CreateCompany extends Job implements HasOwner, HasSource, ShouldCreate
     public function authorize(): void
     {
         $limit = $this->getAnyActionLimitOfPlan();
-        if (! $limit->action_status) {
+        if (!$limit->action_status) {
             throw new \Exception($limit->message);
         }
     }
@@ -133,8 +133,8 @@ class CreateCompany extends Job implements HasOwner, HasSource, ShouldCreate
         }
 
         $currency = Currency::where('company_id', $this->model->id)
-                            ->where('code', $currency_code)
-                            ->first();
+            ->where('code', $currency_code)
+            ->first();
 
         if ($currency) {
             $currency->rate = '1';

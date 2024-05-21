@@ -18,7 +18,7 @@ class CreateUser extends Job implements HasOwner, HasSource, ShouldCreate
 
     public function handle()
     {
-        $this->authorize();
+        // $this->authorize();
 
         event(new UserCreating($this->request));
 
@@ -49,19 +49,20 @@ class CreateUser extends Job implements HasOwner, HasSource, ShouldCreate
             }
 
             if ($this->request->has('companies')) {
-                if (app()->runningInConsole() || request()->isInstall()) {
-                    $this->model->companies()->attach($this->request->get('companies'));
-                } else {
-                    $user = user();
+                $this->model->companies()->attach($this->request->get('companies'));
+                // if (app()->runningInConsole() || request()->isInstall()) {
+                //     $this->model->companies()->attach($this->request->get('companies'));
+                // } else {
+                //     $user = user();
 
-                    $companies = $user->withoutEvents(function () use ($user) {
-                        return $user->companies()->whereIn('id', $this->request->get('companies'))->pluck('id');
-                    });
+                //     $companies = $user->withoutEvents(function () use ($user) {
+                //         return $user->companies()->whereIn('id', $this->request->get('companies'))->pluck('id');
+                //     });
 
-                    if ($companies->isNotEmpty()) {
-                        $this->model->companies()->attach($companies->toArray());
-                    }
-                }
+                //     if ($companies->isNotEmpty()) {
+                //         $this->model->companies()->attach($companies->toArray());
+                //     }
+                // }
             }
 
             if (empty($this->model->companies)) {
@@ -75,12 +76,13 @@ class CreateUser extends Job implements HasOwner, HasSource, ShouldCreate
                 ]);
             }
 
+            // TODO: add mail back
             if ($this->shouldSendInvitation()) {
-                $this->dispatch(new CreateInvitation($this->model));
+                // $this->dispatch(new CreateInvitation($this->model));
             }
         });
 
-        $this->clearPlansCache();
+        // $this->clearPlansCache();
 
         event(new UserCreated($this->model, $this->request));
 
@@ -93,7 +95,7 @@ class CreateUser extends Job implements HasOwner, HasSource, ShouldCreate
     public function authorize(): void
     {
         $limit = $this->getAnyActionLimitOfPlan();
-        if (! $limit->action_status) {
+        if (!$limit->action_status) {
             throw new \Exception($limit->message);
         }
     }
